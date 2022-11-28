@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
-import authenticate from './authenticate';
+import passport from './authenticate';
 import moviesRouter from './api/movies';
 import genresRouter from './api/genres';
 import usersRouter from './api/users';
@@ -24,13 +24,9 @@ const port = process.env.PORT;
 
 app.use(express.json());  // This line should be before useRoutes -- important
 
-app.use(session({
-  secret: 'ilikecake',
-  resave: true,
-  saveUninitialized: true
-}));
+app.use(passport.initialize());
 
-app.use('/api/movies', authenticate, moviesRouter);
+app.use('/api/movies', passport.authenticate('jwt', { session: false }), moviesRouter);
 app.use('/api/genres', genresRouter);
 app.use('/api/users', usersRouter);
 app.use(errHandler);
